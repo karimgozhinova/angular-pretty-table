@@ -1,0 +1,68 @@
+<div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <p class="text-info">The number of entries per page</p>
+        <input type="number" [(ngModel)]="selectedPage" (keydown.ArrowUp)="increaseValue()" (keydown.ArrowDown)="decreaseValue()" [max]="selectOptions" (change)="changePageAmount()">
+      </div>
+      <div class="col-md-8">
+        <p class="text-info">Show/hide columns</p>
+        <form [formGroup]="columnForm">
+          <div>
+            <select multiple>
+              <option *ngFor="let column of columns; let i = index" [ngValue]="column" checked="columnsVisible[i]"
+              (click)="toggleColumn(i)">
+                {{column}} 
+              </option>
+            </select>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+    <br>
+  <div class="row">
+    <input type="text" [(ngModel)]="inputValue" minlength="3" (input)="filterData(inputValue)" placeholder="Search...">
+  </div>
+  <br>
+  <div class="row">
+    <table class="pretty-table">
+      <thead>
+        <tr>
+          <ng-container *ngFor="let column of columns; let i = index">
+            <th *ngIf="columnsVisible[i]" (click)="sortData(column)">
+              {{ column }}
+            </th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredData | paginate : {itemsPerPage : pageSize, currentPage: currentPage, totalItems: totalItems}">
+           
+          <td *ngIf="columnsVisible[0]"><img src="{{item.picture}}"></td>
+           <td *ngIf="columnsVisible[1]">{{item.name}}</td>
+           <td *ngIf="columnsVisible[2]">{{item['surname']}}</td>
+           <td *ngIf="columnsVisible[3]">{{item.age}}</td>
+           <td *ngIf="columnsVisible[4]">{{item.address}}</td>
+           <td *ngIf="columnsVisible[5]">{{item.balance}}</td>
+           <td *ngIf="columnsVisible[6]">{{item.company}}</td>
+           <td *ngIf="columnsVisible[7]">{{item.email}}</td>
+           <td *ngIf="columnsVisible[8]">{{item.favoriteFruit}}</td>
+            <td *ngIf="columnsVisible[9]">{{item.tags.join(', ')}}</td>
+            <td *ngIf="columnsVisible[10]"><input type="checkbox" disabled="true"
+              [(ngModel)]="item.isActive" [ngClass]="{ ' ': item.isActive, 'checkbox-false': !item.isActive }"></td>
+        </tr>
+       </tbody>
+   </table> 
+  </div>
+  <div class="row">
+    <p>items per page: {{pageSize}}</p>
+  </div>
+  <div class="row"> 
+    <p>filtered number of clients: <span *ngIf="totalItems !== data.length">{{totalItems}}</span>
+                                  <span *ngIf="totalItems === data.length">none</span></p>
+  </div>
+  <div class="row">
+    <p>total number of clients: {{data.length}}</p>
+  </div>
+   <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+ </div>
